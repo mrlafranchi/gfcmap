@@ -1,0 +1,525 @@
+{% load extra %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Good Foot Club</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/static/css/app.css?3341">
+  <link rel="stylesheet" href="/static/css/spinner.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.1/dist/leaflet.css"
+   integrity="sha512-Rksm5RenBEKSKFjgI3a41vrjkw4EVPlJ3+OiI65vTjIdo9brlAacEuKOiQ5OFh7cOI1bkDwLqdLw3Zg0cRJAAQ=="
+   crossorigin=""/>
+  <link rel="stylesheet" href="/static/css/tempusdominus-bootstrap-4.min.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="/static/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.4/moment-with-locales.min.js"></script>
+  <script type="text/javascript" src="/static/js/tempusdominus-bootstrap-4.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js"
+   integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw=="
+   crossorigin=""></script>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+  <a class="navbar-brand" href="/">
+    <img src="/static/img/logo.png" alt="Logo" style="width:40px;">
+    Good Foot Club
+  </a>  
+  <ul class="navbar-nav ml-auto">
+    {% if user.is_authenticated %}
+    <li class="nav-item">
+      <a class="nav-link" href="/profile/"><i class="fa fa-user"></i> Profile</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link btn-logout" href="#"><i class="fa fa-sign-out"></i> Logout</a>
+    </li>
+    {% else %}
+    <li class="nav-item">
+      <a class="nav-link" href="#signup-modal" data-toggle="modal"><i class="fa fa-user"></i> Sign up</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#login-modal" data-toggle="modal"><i class="fa fa-sign-in"></i> Login</a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+
+<form class="logout" action="{% url 'rest_logout' %}">
+  {% csrf_token %}
+</form>
+
+<div class="spinner">
+  <div class="bounce1"></div>
+  <div class="bounce2"></div>
+  <div class="bounce3"></div>
+</div>
+
+<div class="container-fluid">
+{% block content %}
+  <div class="row">
+    <div class="col-12">
+      <a href="#" class="tmap float-right d-none">Show map</a>
+      <a href="#" class="tmap float-right">Hide map</a>    
+    </div>
+  </div>
+  <div id="mapid"></div>
+
+  <div class="card field-card">
+    <div class="card-header">Soccer Fields and Facilities
+      {% if user.is_authenticated %}
+      <button class="btn btn-sm btn-success float-right add-location" data-toggle="modal" data-target="#location-modal">Add Field</button>
+      {% endif %}
+    </div>
+    <div class="card-body">
+      {% for location in locations %}
+      <div class="col-12 rounded border border-secondary p-3 mt-4 mb-4">
+        <div class="row">
+          <div class="col-sm-12 no-padding">
+            <h5 class="d-inline" ><a href="/location/{{ location.id }}">{{ location.name }}</a></h5>
+            <span class="badge badge-location badge-info float-right mt-2">{{ location|game_count }}</span>
+            <h6><span class="text-secondary">{{ location.facility_type|title }}</span> | <span class="text-secondary">{{ location.field_type|title }}</span></h6>
+          </div>
+        </div>
+        <div class="row">
+          {% if user.is_authenticated %}
+          <div class="col-sm-12 no-padding">
+            <button class="btn btn-success btn-sm float-right add-event" data-id="{{ location.id }}" data-location="{{ location.name }}">Add Game</button>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div> 
+  </div>  
+{% endblock %}
+</div>
+
+<!-- The Modal -->
+<div class="modal fade" id="login-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Sign in</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      
+      <!-- Modal body -->
+      <form class="login form-inline ajax-post" method="POST" action="{% url 'rest_login' %}">
+      <div class="modal-body">
+          {% csrf_token %}
+          <div class="form-group mt-3">
+              <label class="control-label col-sm-3" for="id_login1">Email:</label>
+              <div class="col-sm-8">
+                  <input id="id_login1" name="email" placeholder="Email" type="email" class="form-control" required="">
+              </div>
+          </div>
+          <div class="form-group mt-3">
+              <label class="control-label col-sm-3" for="id_password">Password:</label>
+              <div class="col-sm-8">
+                  <input id="id_password" name="password" placeholder="Password" type="password" class="input-xlarge form-control" required="">
+              </div>
+          </div>
+          <div class="col-sm-8 offset-sm-3 mt-3">
+            <div class="api-response text-danger"></div>
+          </div>
+      </div>
+      
+      <!-- Modal footer -->
+      <div class="modal-footer col-12">
+        <a href="#forget-modal" data-toggle="modal" class="text-primary" data-dismiss="modal">Forget Password</a>
+        <button type="submit" class="btn btn-success">Sign In</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+      </div>
+      </form>
+      
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="signup-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Sign up</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      
+      <!-- Modal body -->
+      <form class="signup form-inline ajax-post" method="POST" action="{% url 'rest_register' %}">
+      <div class="modal-body">
+          {% csrf_token %}
+          <div class="form-group mt-3">
+              <label class="control-label col-sm-4" for="id_login1">Email:</label>
+              <div class="col-sm-8">
+                  <input name="email" placeholder="Email" type="email" class="form-control" required="">
+              </div>
+          </div>
+          <div class="form-group mt-3">
+              <label class="control-label col-sm-4" for="id_password">Password:</label>
+              <div class="col-sm-8">
+                  <input name="password1" placeholder="Password" type="password" class="input-xlarge form-control" required="">
+              </div>
+          </div>
+          <div class="form-group mt-3">
+              <label class="control-label col-sm-4" for="id_password">Re-Password:</label>
+              <div class="col-sm-8">
+                  <input name="password2" placeholder="Password" type="password" class="input-xlarge form-control" required="">
+              </div>
+          </div>
+          <div class="col-sm-8 offset-sm-3 mt-3">
+            <div class="api-response text-danger"></div>
+          </div>
+      </div>
+      
+      <!-- Modal footer -->
+      <div class="modal-footer col-12">
+        <button type="submit" class="primaryAction btn btn-success">Sign Up</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+      </div>
+      </form>
+      
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="forget-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Password Reset</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      
+      <!-- Modal body -->
+      <form class="signup form-inline ajax-post" method="POST" action="{% url 'rest_password_reset' %}">
+      <div class="modal-body">
+          {% csrf_token %}
+          <div class="form-group mt-3">
+              <label class="control-label col-sm-3" for="id_login1">Email:</label>
+              <div class="col-sm-9">
+                  <input name="email" placeholder="Email" type="email" class="form-control" required="">
+              </div>
+          </div>
+          <div class="col-sm-8 offset-sm-3 mt-3">
+            <div class="api-response text-danger"></div>
+          </div>
+      </div>
+      
+      <!-- Modal footer -->
+      <div class="modal-footer col-12">
+        <button type="submit" class="primaryAction btn btn-success">Reset</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+      </div>
+      </form>
+      
+    </div>
+  </div>
+</div>
+
+<!-- ADD LOCATION MODAL -->
+<div class="modal fade" id="location-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Add Location</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      
+      <!-- Modal body -->
+      <form class="location form-inline ajax-post" method="POST" action="/api/location/">
+      <div class="modal-body">
+          {% csrf_token %}
+          <div class="form-group mt-3">
+              <label class="control-label col-sm-4" for="id_login1">Name:</label>
+              <div class="col-sm-8">
+                  <input name="name" type="text" class="form-control" required="">
+              </div>
+          </div>
+          <div class="form-group mt-3">
+              <label class="control-label col-sm-4" for="id_password">Address:</label>
+              <div class="col-sm-8">
+                  <input name="address" type="text" id="address" class="input-xlarge form-control" required="">
+              </div>
+          </div>
+          <div class="form-group mt-3">
+              <label class="control-label col-sm-4" for="id_password">Facility Type:</label>
+              <div class="col-sm-8">
+                  <select class="input-xlarge form-control" name="facility_type">
+                    <option value="indoor">Indoor</option>
+                    <option value="outdoor">Outdoor</option>
+                  </select> 
+              </div>
+          </div>
+          <div class="form-group mt-3">
+              <label class="control-label col-sm-4" for="id_password">Field Type:</label>
+              <div class="col-sm-8">
+                  <select class="input-xlarge form-control" name="field_type">
+                    <option value="grass">Grass</option>
+                    <option value="turf">Turf</option>
+                    <option value="futsal">Futsal</option>
+                  </select> 
+              </div>
+          </div>
+          <div class="form-group mt-3">
+              <label class="control-label col-sm-4" for="id_login1">Facility URL:</label>
+              <div class="col-sm-8">
+                  <input name="url" type="text" class="form-control" placeholder="www.goodfoot.club">
+              </div>
+          </div>
+          <div class="col-sm-8 offset-sm-3 mt-3">
+            <div class="api-response text-danger"></div>
+          </div>
+      </div>
+      
+      <!-- Modal footer -->
+      <div class="modal-footer col-12">
+        <button type="submit" class="primaryAction btn btn-success"> &nbsp;Add&nbsp; </button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+      </div>
+      </form>
+      
+    </div>
+  </div>
+</div>
+
+<!-- ADD EVENT MODAL -->
+<div class="modal fade" id="event-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Add Game Event</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      
+      <!-- Modal body -->
+      <form class="event form-inline ajax-post" method="POST" action="/api/gameevent/">
+      <div class="modal-body">
+          {% csrf_token %}
+          <div class="form-group mt-3">
+              <label class="control-label col-sm-4" for="id_login1">Location:</label>
+              <div class="col-sm-8">
+                  <input name="location" id="location-id" type="hidden">
+                  <input type="text" id="location-name" class="form-control" readonly>
+              </div>
+          </div>
+          <div class="form-group mt-3">
+              <label class="control-label col-sm-4" for="id_password">Date:</label>
+              <div class="col-sm-8">
+                <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                    <input type="text" name="datetime" class="form-control datetimepicker-input" data-target="#datetimepicker1" required="" />
+                    <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div>
+              </div>
+          </div>
+          <div class="form-group mt-3">
+              <label class="control-label col-sm-4" for="id_password">Time:</label>
+              <div class="col-sm-8">
+                <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+                    <input type="text" name="time" class="form-control datetimepicker-input" data-target="#datetimepicker2" required="" />
+                    <div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-clock-o"></i></div>
+                    </div>
+                </div>
+              </div>
+          </div>          
+          <div class="form-group mt-3">
+              <label class="control-label col-sm-4" for="id_password">Description:</label>
+              <div class="col-sm-8">
+                  <input name="description" type="text" class="input-xlarge form-control">
+              </div>
+          </div>
+          <div class="form-group mt-3">
+              <label class="control-label col-sm-4" for="id_password">Invite Players:</label>
+              <div class="col-sm-8">
+                  <select class="input-xlarge form-control" name="players" multiple size="5" required="" style="width: 80%;">
+                    {% for player in players %}
+                      <option value="{{ player.id }}">{{ player.first_name }} {{ player.last_name }}</option>
+                    {% endfor %}
+                  </select> 
+              </div>
+          </div>
+          <div class="col-sm-8 offset-sm-3 mt-3">
+            <div class="api-response text-danger"></div>
+          </div>
+      </div>
+      
+      <!-- Modal footer -->
+      <div class="modal-footer col-12">
+        <button type="submit" class="primaryAction btn btn-success"> &nbsp;Add&nbsp; </button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+      </div>
+      </form>
+      
+    </div>
+  </div>
+</div>
+
+<!-- Shouldn't the access tokens and keys be hidden -->
+
+{% block gis_script %}
+<script type="text/javascript">
+  var mymap = L.map('mapid').setView([{{ center }}], 11);
+  L.tileLayer('https://api.mapbox.com/styles/v1/mrlafranchi/cje7t476g2b732suhfp4dppwt/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibXJsYWZyYW5jaGkiLCJhIjoiY2plN3Rqb3lrMDYzbTJxbTkzbng1MTI0biJ9.eL-tuo_tk8QFx_zFWwhllA', {
+    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox.streets',
+    accessToken: 'pk.eyJ1IjoibXJsYWZyYW5jaGkiLCJhIjoiY2plN3Rqb3lrMDYzbTJxbTkzbng1MTI0biJ9.eL-tuo_tk8QFx_zFWwhllA'
+  }).addTo(mymap);
+
+  // add markers for locations
+  {% for location in locations %}
+    {% if location.lat and location.lng %}
+      L.marker([{{ location.lat }}, {{ location.lng }}]).addTo(mymap).bindPopup('{{ location.name }}');        
+    {% endif %}
+  {% endfor %}
+
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfqKLaWJAKqyezsQKrZbsfCuzTLfgDkL0&libraries=places"></script>
+<script>
+$(function () {
+  autocomplete = new google.maps.places.Autocomplete((document.getElementById('address')),
+      {types: ['geocode']});
+  $('.add-location').click(function() {
+    $('form.location')[0].reset();
+  });
+});
+
+var redirect_url = '/';
+</script>
+{% endblock %}
+
+{% block script %}
+<script>
+$(function () {
+  $('.add-event').click(function() {
+    $('form.event')[0].reset();
+    $('.api-response').html('');
+    $('#location-id').val($(this).data('id'));
+    $('#location-name').val($(this).data('location'));
+    $('#event-modal').modal();
+  });
+
+  $('#datetimepicker1').datetimepicker({
+    format: 'YYYY-MM-DD'
+  });
+
+  $('#datetimepicker2').datetimepicker({
+      format: 'LT'
+  });  
+});
+</script>
+{% endblock %}
+
+<script type="text/javascript">
+  var error_response = function(data){
+    var message;
+
+    if (data.status == 500) {
+      message = "Something is wrong on server. please contact server administrator.";
+    } else {
+      var key = Object.keys(data.responseJSON)[0];
+      message = data.responseJSON[key];
+    }
+    
+    $('.api-response').html(message);
+    endLoading();
+  }
+
+  var susccess_response = function(data){
+    endLoading();
+    var RES = ['Password reset e-mail has been sent.', 
+               'Verification e-mail sent.',
+               'Password has been reset with the new password.'];
+
+    if (RES.indexOf(data.detail) > -1) {
+      $('.api-response').html('<span class="text-success">'+data.detail+'</span>');
+    } else {
+      location.href = redirect_url;      
+    }
+  }
+
+  $().ready(function(){
+    $('.nav-link').click(function() {
+      $('.api-response').html('');   
+    });
+
+    $('form.ajax-post').submit(function(e){
+      startLoading();
+      e.preventDefault();
+
+      var form = $(this);
+
+      if (form.attr('class').indexOf('event ') > -1) {
+        var date = $('input[name=datetime]').val();
+        var time = $('input[name=time]').val();
+        $('input[name=datetime]').val(date+'T'+time);
+      }
+
+      $.post(form.attr('action'), form.serialize())
+      .fail(function(data){error_response(data);})
+      .done(function(data){susccess_response(data);});
+      return false;
+    });
+
+    $('.btn-logout').click(function() {
+      var form = $('form.logout');
+      $.post('/rest-auth/logout/', form.serialize()).done(function(data) {
+        location.reload();
+      });
+    })
+
+    $('.btn-game').click(function() {
+      startLoading();
+      $.ajax({
+        url: $(this).data('url'),
+        type: 'POST',
+        headers: {
+          'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+        },
+        data: {},
+        success: function(data){ 
+          endLoading();
+          location.reload();
+        },
+      });
+    });       
+
+    $('.tmap').click(function() {
+      $('.tmap').toggleClass('d-none');
+      $('#mapid').toggleClass('d-none');
+    })
+  });
+
+  function toggleBody(obj) {
+    $(obj).parent().find('.card-body.player').toggleClass('d-none');
+  }
+  
+  function startLoading() {
+    $('.spinner').show();    
+  }
+
+  function endLoading() {
+    $('.spinner').hide();    
+  }
+</script>
+
+</body>
+</html>

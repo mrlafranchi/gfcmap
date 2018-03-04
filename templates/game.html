@@ -1,0 +1,61 @@
+{% extends "index.html" %}
+{% load extra %}
+
+{% block content %}
+  <div class="card field-card mt-4">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-sm-8 no-padding">      
+          <h4 class="d-inline" ><a href="/location/{{ game.location.id }}">{{ game.location.name }}</a></h4>
+          <h6 class="mt-2"><span class="text-secondary"></span>{{ game.datetime|date:'l, N d, Y, H:i' }}</h6>
+          <h6 class="d-inline" >{% if game.description %}<span class="text-muted">Game details: {{ game.description }}</span>{% endif %}</h6>
+        </div>
+        <div class="col-sm-4 no-padding">
+          {% if user.is_authenticated %}
+            {% if user in game.players.all %}
+              <button class="btn btn-sm btn-success btn-game float-right mt-4" data-url="/api/gameevent/{{ game.id }}/leave_game/">Leave Game</button>
+            {% else %}
+              <button class="btn btn-sm btn-success btn-game float-right mt-4" data-url="/api/gameevent/{{ game.id }}/join_game/">Join Game</button>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row">
+      {% for player in game.players.all %}
+      <div class="col-sm-12 col-lg-6 mt-2 mb-2 p-1">
+        <div class="col-sm-12 rounded border border-secondary p-3 ">
+        <div class="row">
+          <div class="col-sm-12 no-padding">
+            <h3 class="d-inline" >
+              <img src="/static/media/avatar/{{ user.avatar }}" class="avatar rounded-circle" style="width: 80px; height: 80px;">
+              {{ player.first_name }} {{ player.last_name }}
+            </h3>
+            <h6 class="mt-2"><span class="text-secondary"></span>{{ player.email }}</h6>
+              {% with flag=player|is_accepted:game %} 
+                {% if flag %}
+                  <span class="badge badge-success float-right">Accepted</span>
+                {% else %}
+                  <span class="badge badge-warning float-right">Unaccepted</span>
+                {% endif %}
+              {% endwith %}
+            <h6 class="d-inline" ><span class="text-muted">Home Field: {% if player.home_field %}{{ player.home_field }}{% else %} Not Choosen{% endif %}</span></h6>
+          </div>
+        </div>
+        </div>
+      </div>
+      {% endfor %}
+      </div>
+    </div> 
+  </div>  
+
+  {% csrf_token %}
+
+{% endblock %}
+
+{% block gis_script %}
+<script type="text/javascript">  
+  var redirect_url = '{{ request.path }}';
+</script>
+{% endblock %}

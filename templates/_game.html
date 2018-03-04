@@ -1,0 +1,61 @@
+{% load extra %}
+
+<div class="col-12 rounded border border-secondary p-3 mt-4 mb-4">
+  <div class="row">
+    <div class="col-sm-12 no-padding">
+      <h4 class="d-inline" >{% if game.description %} {{ game.description }} {% else %} Open pickup game {% endif %}</h6>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-8 no-padding">
+      <h5 class="mt-2"><span class="text-secondary">{{ game.datetime|date:'l, N d, h:i A' }}</span></h5>
+      <h5 class="d-inline"><span class="text-secondary">{{ game.location.name }}</span></h5>      
+    </div>
+    {% if user.is_authenticated %}
+    <div class="col-sm-4 no-padding">
+      {% if user in game.players.all %}
+        <button class="btn btn-sm btn-success btn-game float-right mt-2" data-url="/api/gameevent/{{ game.id }}/leave_game/">Leave Game</button>
+      {% else %}
+        <button class="btn btn-sm btn-success btn-game float-right mt-2" data-url="/api/gameevent/{{ game.id }}/join_game/">Join Game</button>
+      {% endif %}
+    </div>
+    {% endif %}          
+  </div>
+  <div class="row"><div class="col-sm-12 p-0">
+    <div class="card field-card mt-3 mb-0">
+      <div class="card-header player" onclick="toggleBody(this);">
+        <div class="row">
+          <div class="col-sm-12 no-padding">      
+            <h5 class="d-inline" >Player List</h5>
+            <span class="badge badge-secondary float-right badge-player">{{ game|player_count }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-body player d-none">
+        <div class="row">
+        {% for player in game.players.all %}
+        <div class="col-sm-12 col-lg-6 mt-2 mb-2 p-1">
+          <div class="col-sm-12 rounded border border-muted p-3 ">
+          <div class="row">
+            <div class="col-sm-12 no-padding">
+              <h5 class="d-inline" >
+                <img src="/static/media/avatar/{{ player.avatar }}" class="avatar rounded-circle mr-3" style="width: 70px; height: 70px;">
+                {{ player.first_name }} {{ player.last_name }}
+              </h5>
+              {% with flag=player|is_accepted:game %} 
+                {% if flag %}
+                  <span class="badge badge-success float-right"> Playing </span>
+                {% else %}
+                  <span class="badge badge-info float-right"> Invited </span>
+                {% endif %}
+              {% endwith %}
+            </div>
+          </div>
+          </div>
+        </div>
+        {% endfor %}
+        </div>
+      </div> 
+    </div>  
+  </div></div>
+</div>

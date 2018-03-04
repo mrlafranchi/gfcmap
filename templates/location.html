@@ -1,0 +1,38 @@
+{% extends "index.html" %}
+
+{% block content %}
+  <div class="card field-card">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-sm-8 no-padding">
+          <h4 class="d-inline" >{{ location.name }}</h4>
+          <h6 class="mt-2"><span class="text-secondary"></span>{{ location.address }}</h6>
+          <h6><span class="text-secondary">{{ location.facility_type|title }}</span> | <span class="text-secondary">{{ location.field_type|title }}</span></h6>
+          {% if location.url %}
+            <h6 class="mt-2"><span class="text-secondary"></span><a href="http://{{ location.url }}" target="_blank">{{ location.name }} Website</a></h6>
+          {% endif %}
+        </div>
+        <div class="col-sm-4 no-padding">
+          {% if user.is_authenticated %}
+          <button class="btn btn-sm btn-success float-right add-event mt-4" data-id="{{ location.id }}" data-location="{{ location.name }}">Add Game</button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      {% if games %}
+        {% for game in games %}
+          {% include '_game.html' %}
+        {% endfor %}
+      {% else %}
+        <div>No Games</div>
+      {% endif %}
+    </div> 
+  </div>  
+{% endblock %}
+
+{% block gis_script %}
+<script type="text/javascript">
+  var redirect_url = '{{ request.path }}';
+</script>
+{% endblock %}

@@ -1,0 +1,171 @@
+{% extends "index.html" %}
+
+{% block content %}
+  <div class="card field-card">
+    <div class="card-header profile">Player Profile
+      <span class="float-right">
+        <i class="fa fa-window-minimize d-none"></i>
+        <i class="fa fa-window-maximize"></i>      
+      </span>
+    </div>
+    <div class="card-body profile d-none">
+      <form class="profile form-inline" action="/rest-auth/user/">
+      <div class="modal-body">
+          {% csrf_token %}
+          <div class="form-group m-t-15">
+              <div class="col-sm-4 text-center col-xs-5 upload-image" style="margin-bottom: 15px;">
+                  <input id="inputfile" type="file" name="files[]" data-maxfilesize="4000000" class="d-none" data-maxuploadfile="20" data-imagequality="0.7">
+                  <input type="hidden" name="uploded_id[]" class="uploded_id" />
+                  <input type="hidden" name="avatar" class="uploded_id1" value="{{ form.avatar.value }}" />
+                  <img src="/static/media/avatar/{{ user.avatar }}" class="avatar rounded-circle" style="width: 100px; height: 100px;">
+              </div>
+              <div class="col-sm-8 col-xs-7">
+                  <button class="btn upload-avatar"><i class="fa fa-upload"></i> Upload Avatar</button>
+              </div>
+          </div>
+
+          <div class="form-group mt-3">
+              <label class="control-label col-sm-4" for="id_login1">First Name:</label>
+              <div class="col-sm-8">
+                  <input type="text" name="first_name" class="form-control" required="" {% if user.first_name %}value="{{ user.first_name }}"{% endif %}>
+              </div>
+          </div>
+          <div class="form-group mt-3">
+              <label class="control-label col-sm-4" for="id_login1">Last Name:</label>
+              <div class="col-sm-8">
+                  <input type="text" name="last_name" class="form-control" required="" {% if user.last_name %}value="{{ user.last_name }}"{% endif %}>
+              </div>
+          </div>
+          <div class="form-group mt-3">
+              <label class="control-label col-sm-4" for="id_password">Birthday:</label>
+              <div class="col-sm-8">
+                <div class="input-group date" id="datetimepicker1" data-target-input="nearest" style="width: 258px;">
+                    <input type="text" name="birthday" class="form-control datetimepicker-input" data-target="#datetimepicker1" required=""  {% if user.birthday %}value="{{ user.birthday|date:"Y-m-d" }}"{% endif %}/>
+                    <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div>
+              </div>
+          </div>
+          <div class="form-group mt-3">
+              <label class="control-label col-sm-4" for="id_password">Gender:</label>
+              <div class="col-sm-8">
+                  <select class="input-xlarge form-control" name="gender">
+                    <option value="male" {% if user.gender == "male" %} selected {% endif %}>Male</option>
+                    <option value="female" {% if user.gender == "female" %} selected {% endif %}>Female</option>
+                  </select> 
+              </div>
+          </div>          
+          <div class="form-group mt-3">
+              <label class="control-label col-sm-4" for="id_password">Email:</label>
+              <div class="col-sm-8">
+                  <input name="email" type="email" class="input-xlarge form-control" required="" {% if user.email %}value="{{ user.email }}"{% endif %}>
+              </div>
+          </div>
+          <div class="form-group mt-3">
+              <label class="control-label col-sm-4" for="id_password">Home Field:</label>
+              <div class="col-sm-8">
+                  <select class="input-xlarge form-control" name="home_field" required="">
+                    <option value=""> --- </option>
+                    {% for location in locations %}
+                      <option value="{{ location.id }}" {% if user.home_field.id == location.id %} selected {% endif %}>{{ location.name }}</option>
+                    {% endfor %}
+                  </select> 
+              </div>
+          </div>
+          <div class="col-sm-8 offset-sm-3 mt-3">
+            <div class="api-response text-danger"></div>
+          </div>
+      </div>
+      
+      <!-- Modal footer -->
+      <div class="modal-footer col-12">
+        <button type="submit" class="primaryAction btn btn-success"> Save </button>
+        <button type="reset" class="btn btn-danger">Cancel</button>
+      </div>
+      </form>      
+    </div>
+  </div>
+
+  <div class="card field-card">
+    <div class="card-header">My Games
+      {% if not user.is_authenticated %}
+      <button class="btn btn-sm btn-success float-right add-location" data-toggle="modal" data-target="#event-modal">Add Game</button>
+      {% endif %}
+    </div>
+    <div class="card-body">
+      {% if games %}
+        {% for game in games %}
+          {% include '_game.html' %}
+        {% endfor %}
+      {% else %}
+        <div>No Games</div>
+      {% endif %}
+    </div> 
+  </div>  
+{% endblock %}
+
+{% block script %}
+<script>
+$(function () {
+  $('#datetimepicker1').datetimepicker({
+    format: 'YYYY-MM-DD'
+  });
+
+  $('form.profile').submit(function(e){
+    e.preventDefault();
+    var form = $(this);
+    startLoading();
+
+    $.ajax({
+      url: form.attr('action'),
+      type: 'PUT',
+      headers: {
+        'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+      },
+      data: $(this).serialize(),
+      success: function(data){ 
+        endLoading();
+        alert('Your profile saved successfully.'); 
+      },
+    });
+
+    return false;
+  });  
+
+  $("body").on("click", ".upload-avatar", function(e) {
+    e.preventDefault();
+    jQuery("#inputfile").click();
+  });
+
+  $("#inputfile").change(function() {
+      var fd = new FormData();
+      var file = this.files;
+      fd.append("images", file[0]);
+      fd.append('type', 'avatar');
+
+      jQuery.ajax({
+          type: 'POST',
+          url: '/upload-image',
+          data: fd,
+          contentType: false,
+          dataType: "json",
+          processData: false,
+          success: function(response) {
+              jQuery(".upload-image").find('input[class="uploded_id"]').val(response.image_name);
+              jQuery(".upload-image").find('input[class="uploded_id1"]').val(response.image_name);
+              jQuery(".avatar").attr('src', response.image_url);
+          }
+      });
+  });
+  $('.card-header.profile').click(function() {
+    $('.card-body.profile').toggleClass('d-none');
+    $('.fa-window-minimize').toggleClass('d-none');
+    $('.fa-window-maximize').toggleClass('d-none');    
+  });
+});
+</script>
+{% endblock %}
+
+{% block gis_script %}
+{% endblock %}
