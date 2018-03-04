@@ -150,8 +150,8 @@ REST_AUTH_SERIALIZERS = {
 }
 
 REST_SESSION_LOGIN = True
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 AUTH_USER_MODEL = 'general.Player'
 
