@@ -448,10 +448,11 @@ $(function () {
   var susccess_response = function(data){
     endLoading();
     var RES = ['Password reset e-mail has been sent.', 
-               'Verification e-mail sent.',
                'Password has been reset with the new password.'];
 
-    if (RES.indexOf(data.detail) > -1) {
+    if (data.detail == 'Verification e-mail sent.') {
+      $('.api-response').html('<span class="text-success">Verification e-mail sent. Check spam folder.</span>');      
+    } else if (RES.indexOf(data.detail) > -1) {
       $('.api-response').html('<span class="text-success">'+data.detail+'</span>');
     } else {
       location.href = redirect_url;      
