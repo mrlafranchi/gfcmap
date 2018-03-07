@@ -84,13 +84,23 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'soccerapp.wsgi.application'
 
-
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "goodfoot",
+        "USER": "twodo_user",
+        "PASSWORD": "f2#2$2D@3",
+        "HOST": "localhost",
+        "PORT": "",
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
 
 # Password validation
