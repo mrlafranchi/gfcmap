@@ -19,7 +19,7 @@
                   <input type="hidden" name="avatar" class="uploded_id1" value="{{ form.avatar.value }}" />
                   <img src="/static/media/avatar/{{ user.avatar }}" class="avatar rounded-circle" style="width: 100px; height: 100px;">
               </div>
-              <div class="col-sm-8 col-xs-7">
+              <div class="col-sm-4 col-md-2 text-center">
                   <button class="btn upload-avatar"><i class="fa fa-upload"></i> Upload Avatar</button>
               </div>
           </div>
@@ -39,7 +39,7 @@
           <div class="form-group mt-3">
               <label class="control-label col-sm-4" for="id_password">Birthday:</label>
               <div class="col-sm-8">
-                <div class="input-group date" id="datetimepicker1" data-target-input="nearest" style="width: 258px;">
+                <div class="input-group date" id="datetimepicker1" data-target-input="nearest" style="max-width: 258px;">
                     <input type="text" name="birthday" class="form-control datetimepicker-input" data-target="#datetimepicker1" required=""  {% if user.birthday %}value="{{ user.birthday|date:"Y-m-d" }}"{% endif %}/>
                     <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
