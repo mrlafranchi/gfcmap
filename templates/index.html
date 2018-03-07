@@ -325,6 +325,7 @@
                     <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                     </div>
+                    <small id="emailHelp" class="form-text text-muted">You can create a game from tomorrow.</small>
                 </div>
               </div>
           </div>
@@ -418,7 +419,8 @@ $(function () {
   });
 
   $('#datetimepicker1').datetimepicker({
-    format: 'YYYY-MM-DD'
+    format: 'YYYY-MM-DD',
+    minDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
   });
 
   $('#datetimepicker2').datetimepicker({

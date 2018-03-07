@@ -7,3 +7,4 @@ migrations
 static/media
 .DS_Store
 env
+settings.py
