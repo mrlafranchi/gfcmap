@@ -32,7 +32,7 @@ def index(request):
 
 @login_required(login_url='/')
 def profile(request):
-    games = GameEvent.objects.filter(datetime__gte=datetime.datetime.now()+datetime.timedelta(days=-1), players__in=[request.user]).order_by('datetime')
+    games = GameEvent.objects.filter(datetime__gte=datetime.datetime.now(), players__in=[request.user]).order_by('datetime')
     locations = Location.objects.all().order_by('name')
 
     return render(request, 'profile.html', {
@@ -42,7 +42,7 @@ def profile(request):
 
 def location(request, id):
     location = Location.objects.get(id=id)
-    games = location.events.filter(datetime__gte=datetime.datetime.now()+datetime.timedelta(days=-1)) \
+    games = location.events.filter(datetime__gte=datetime.datetime.now()) \
                            .order_by('datetime')
     return render(request, 'location.html', {
         'games': games,
