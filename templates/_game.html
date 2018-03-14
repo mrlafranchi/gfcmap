@@ -15,7 +15,16 @@
     <div class="col-sm-4 no-padding">
       {% if user == game.created_by or user.is_superuser %}
         <button class="btn btn-sm btn-danger float-right mt-2 ml-1" onclick="delete_game({{ game.id }})"><i class="fa fa-remove"></i></button>
-        <button class="btn btn-sm btn-default float-right mt-2 ml-1" data-url="/api/gameevent/{{ game.id }}/join_game/"><i class="fa fa-pencil"></i></button>
+        <button class="btn btn-sm btn-default btn-game-edit float-right mt-2 ml-1" 
+          data-loc_id="{{ game.location.id }}"
+          data-loc_name="{{ game.location }}"
+          data-date="{{ game.datetime|date:'Y-m-d' }}" 
+          data-time="{{ game.datetime|date:'h:i A' }}" 
+          data-description="{{ game.description }}" 
+          data-players="{{ game.players.all|ids }}" 
+          data-url="/api/gameevent/{{ game.id }}/" >
+          <i class="fa fa-pencil"></i>
+        </button>
       {% endif %}
 
       {% if user in game.players.all %}

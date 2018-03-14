@@ -22,3 +22,7 @@ def player_count(game):
 @register.filter
 def game_count(location):
     return location.events.filter(datetime__gte=datetime.datetime.now()).count()
+
+@register.filter
+def ids(qs):
+    return ','.join([str(ii.id) for ii in qs])
