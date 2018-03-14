@@ -7,7 +7,7 @@ class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
         fields = ('__all__')
-        read_only_fields = ('created_at',)
+        read_only_fields = ('created_at', 'created_by')
 
 
 class GameEventSerializer(serializers.ModelSerializer):
@@ -35,6 +35,7 @@ class GameEventSerializer(serializers.ModelSerializer):
     class Meta:
         model = GameEvent
         fields = ('__all__')
+        read_only_fields = ('created_by',)
 
 
 class UserDetailsSerializer(serializers.ModelSerializer):

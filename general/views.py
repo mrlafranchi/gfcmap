@@ -73,10 +73,17 @@ class LocationViewSet(viewsets.ModelViewSet):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
 
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
+
 
 class GameEventViewSet(viewsets.ModelViewSet):
     queryset = GameEvent.objects.all()
     serializer_class = GameEventSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
+
 
     @detail_route(methods=['POST'])
     def join_game(self, request, *args, **kwargs):

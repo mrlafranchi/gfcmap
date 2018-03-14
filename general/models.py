@@ -51,7 +51,9 @@ class Location(models.Model):
     field_type = models.CharField(max_length=20, choices=FIELD_TYPE, default='grass') 
     url = models.CharField(max_length=120, null=True, blank=True) 
     lat = models.FloatField(default=0)
-    lng = models.FloatField(default=0)    
+    lng = models.FloatField(default=0)
+
+    created_by = models.ForeignKey(Player, related_name="field_creator")
     created_at = models.DateTimeField(auto_now_add=True) 
 
     def __str__(self):
@@ -80,6 +82,7 @@ class GameEvent(models.Model):
     datetime = models.DateTimeField()
     description = models.CharField(max_length=255, blank=True, null=True) 
     players = models.ManyToManyField(Player)
+    created_by = models.ForeignKey(Player, related_name="game_creator")
 
     def __str__(self):
         return self.location.name

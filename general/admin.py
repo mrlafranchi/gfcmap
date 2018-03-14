@@ -6,7 +6,7 @@ from django.contrib import admin
 from general.models import *
 
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'address', 'facility_type', 'field_type', 'lat', 'lng', 'url', 'created_at')
+    list_display = ('name', 'address', 'facility_type', 'field_type', 'lat', 'lng', 'url', 'created_by', 'created_at')
     search_fields = ['name', 'address']
 
 
@@ -15,7 +15,11 @@ class GameInvitationAdmin(admin.ModelAdmin):
     search_fields = ['game', 'player', 'code']
 
 
+class GameEventAdmin(admin.ModelAdmin):
+    list_display = ('location', 'datetime', 'created_by', 'description')
+
+
 admin.site.register(Location, LocationAdmin)
 admin.site.register(Player)
-admin.site.register(GameEvent)
+admin.site.register(GameEvent, GameEventAdmin)
 admin.site.register(GameInvitation, GameInvitationAdmin)

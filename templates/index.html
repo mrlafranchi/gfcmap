@@ -515,6 +515,25 @@ $(function () {
     })
   });
 
+  function delete_game(game_id) {
+    var r = confirm("Are you sure to delete this game?");
+    if (r == true) {
+      startLoading();
+      $.ajax({
+        url: '/api/gameevent/'+game_id+'/',
+        type: 'DELETE',
+        headers: {
+          'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+        },
+        data: {},
+        success: function(data){ 
+          endLoading();
+          location.reload();
+        },
+      });
+    }
+  }
+
   function toggleBody(obj) {
     $(obj).parent().find('.card-body.player').toggleClass('d-none');
   }
