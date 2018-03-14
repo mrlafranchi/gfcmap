@@ -351,7 +351,11 @@
               <div class="col-sm-8">
                   <select class="input-xlarge form-control" name="players" multiple size="5" required="" style="width: 80%;">
                     {% for player in players %}
-                      <option value="{{ player.id }}">{{ player.first_name }} {{ player.last_name }}</option>
+                      {% if player.first_name and player.last_name %}
+                        <option value="{{ player.id }}">{{ player.first_name }} {{ player.last_name }}</option>
+                      {% else %}
+                        <option value="{{ player.id }}">{{ player.username }}</option>
+                      {% endif %}
                     {% endfor %}
                   </select> 
               </div>

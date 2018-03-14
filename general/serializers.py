@@ -25,8 +25,8 @@ class GameEventSerializer(serializers.ModelSerializer):
             if not accepted:
                 send_mail(
                     'Game Event Notification',
-                    'You are invited to a <a href="http://18.222.154.104/game/{}">game</a> at {} {}. Please accept it <a href="http://18.222.154.104/accept_invitation/{}">here</a>.'.format(game.id, game.location, game.datetime, code),
-                    'info@goodfoot.club',
+                    'You are invited to a game (http://goodfoot.club/game/{}) at {} {}. Please accept it here (http://goodfoot.club/accept_invitation/{}).'.format(game.id, game.location, game.datetime, code),
+                    'SoccerBot@gfc.com',
                     [player.email],
                     fail_silently=False,
                 )
