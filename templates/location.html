@@ -12,7 +12,7 @@
             <h6 class="mt-2"><span class="text-secondary"></span><a href="http://{{ location.url }}" target="_blank">{{ location.name }} Website</a></h6>
           {% endif %}
         </div>
-        <div class="col-sm-4 no-padding">
+        <div class="col-sm-4 no-padding">          
           {% if user.is_authenticated %}
           <button class="btn btn-sm btn-success float-right add-event mt-4" data-id="{{ location.id }}" data-location="{{ location.name }}">Add Game</button>
           {% endif %}

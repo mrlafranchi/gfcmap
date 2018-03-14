@@ -86,8 +86,13 @@
           </div>
         </div>
         <div class="row">
+          
           {% if user.is_authenticated %}
           <div class="col-sm-12 no-padding">
+            {% if user == location.created_by %}
+              <button class="btn btn-sm btn-danger float-right ml-1" onclick="delete_location({{ location.id }})"><i class="fa fa-remove"></i></button>
+              <button class="btn btn-sm btn-default float-right ml-1" data-url="/api/gameevent/{{ game.id }}/join_game/"><i class="fa fa-pencil"></i></button>
+            {% endif %}
             <button class="btn btn-success btn-sm float-right add-event" data-id="{{ location.id }}" data-location="{{ location.name }}">Add Game</button>
           </div>
           {% endif %}
@@ -521,6 +526,25 @@ $(function () {
       startLoading();
       $.ajax({
         url: '/api/gameevent/'+game_id+'/',
+        type: 'DELETE',
+        headers: {
+          'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
+        },
+        data: {},
+        success: function(data){ 
+          endLoading();
+          location.reload();
+        },
+      });
+    }
+  }
+
+  function delete_location(location_id) {
+    var r = confirm("Are you sure to delete this location? \nGames in this field would be deleted too.");
+    if (r == true) {
+      startLoading();
+      $.ajax({
+        url: '/api/location/'+location_id+'/',
         type: 'DELETE',
         headers: {
           'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
