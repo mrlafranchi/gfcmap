@@ -39,9 +39,9 @@
           <div class="form-group mt-3">
               <label class="control-label col-sm-4" for="id_password">Birthday:</label>
               <div class="col-sm-8">
-                <div class="input-group date" id="datetimepicker1" data-target-input="nearest" style="max-width: 258px;">
-                    <input type="text" name="birthday" class="form-control datetimepicker-input" data-target="#datetimepicker1" required=""  {% if user.birthday %}value="{{ user.birthday|date:"Y-m-d" }}"{% endif %}/>
-                    <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                <div class="input-group date" id="datetimepicker12" data-target-input="nearest" style="max-width: 258px;">
+                    <input type="text" name="birthday" class="form-control datetimepicker-input" data-target="#datetimepicker12" required=""  {% if user.birthday %}value="{{ user.birthday|date:"Y-m-d" }}"{% endif %}/>
+                    <div class="input-group-append" data-target="#datetimepicker12" data-toggle="datetimepicker">
                         <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                     </div>
                 </div>
@@ -109,6 +109,15 @@
 <script>
 $(function () {
   $('#datetimepicker1').datetimepicker({
+    format: 'YYYY-MM-DD',
+    minDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
+  });
+
+  $('#datetimepicker2').datetimepicker({
+      format: 'LT'
+  });  
+    
+  $('#datetimepicker12').datetimepicker({
     format: 'YYYY-MM-DD'
   });
 
@@ -168,4 +177,7 @@ $(function () {
 {% endblock %}
 
 {% block gis_script %}
+<script type="text/javascript">
+  var redirect_url = '{{ request.path }}';
+</script>
 {% endblock %}

@@ -437,20 +437,6 @@ $(function () {
   $('#datetimepicker2').datetimepicker({
       format: 'LT'
   });  
-
-  $('.btn-game-edit').click(function() {
-    $('form.event')[0].reset();
-    $('.api-response').html('');
-    $('#location-id').val($(this).data('loc_id'));
-    $('#location-name').val($(this).data('loc_name'));
-    $('form.event input[name=datetime]').val($(this).data('date'));
-    $('form.event input[name=time]').val($(this).data('time'));
-    $('form.event input[name=description]').val($(this).data('description'));
-    $("form.event select[name=players]").val($(this).data('players').split(','));
-    $('form.event input[name=url]').val($(this).data('url'));
-
-    $('#event-modal').modal();
-  });
 });
 </script>
 {% endblock %}
@@ -521,6 +507,20 @@ $(function () {
       return false;
     });
 
+    $('.btn-game-edit').click(function() {
+      $('form.event')[0].reset();
+      $('.api-response').html('');
+      $('#location-id').val($(this).data('loc_id'));
+      $('#location-name').val($(this).data('loc_name'));
+      $('form.event input[name=datetime]').val($(this).data('date'));
+      $('form.event input[name=time]').val($(this).data('time'));
+      $('form.event input[name=description]').val($(this).data('description'));
+      $("form.event select[name=players]").val($(this).data('players').split(','));
+      $('form.event input[name=url]').val($(this).data('url'));
+
+      $('#event-modal').modal();
+    });
+    
     $('.btn-logout').click(function() {
       var form = $('form.logout');
       $.post('/rest-auth/logout/', form.serialize()).done(function(data) {

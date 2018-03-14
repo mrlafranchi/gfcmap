@@ -37,6 +37,7 @@ def profile(request):
 
     return render(request, 'profile.html', {
         'games': games,
+        'players': Player.objects.all(),
         'locations': locations
     })
 
