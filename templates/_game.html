@@ -40,7 +40,11 @@
             <div class="col-sm-12 no-padding">
               <h5 class="d-inline" >
                 <img src="/static/media/avatar/{{ player.avatar }}" class="avatar rounded-circle mr-3" style="width: 70px; height: 70px;">
-                {{ player.first_name }} {{ player.last_name }}
+                {% if player.first_name and player.last_name %}
+                  {{ player.first_name }} {{ player.last_name }}
+                {% else %}
+                  {{ player.username }}
+                {% endif %}
               </h5>
               {% with flag=player|is_accepted:game %} 
                 {% if flag %}
