@@ -91,7 +91,15 @@
           <div class="col-sm-12 no-padding">
             {% if user == location.created_by or user.is_superuser %}
               <button class="btn btn-sm btn-danger float-right ml-1" onclick="delete_location({{ location.id }})"><i class="fa fa-remove"></i></button>
-              <button class="btn btn-sm btn-default float-right ml-1" data-url="/api/gameevent/{{ game.id }}/join_game/"><i class="fa fa-pencil"></i></button>
+              <button class="btn btn-sm btn-default btn-location-edit float-right ml-1" 
+                data-name="{{ location.name }}"
+                data-address="{{ location.address }}"
+                data-facility_type="{{ location.facility_type }}" 
+                data-field_type="{{ location.field_type }}" 
+                data-link="{{ location.url }}" 
+                data-url="/api/location/{{ location.id }}/" >
+                <i class="fa fa-pencil"></i>
+              </button>
             {% endif %}
             <button class="btn btn-success btn-sm float-right add-event" data-id="{{ location.id }}" data-location="{{ location.name }}">Add Game</button>
           </div>
@@ -291,7 +299,7 @@
       
       <!-- Modal footer -->
       <div class="modal-footer col-12">
-        <button type="submit" class="primaryAction btn btn-success"> &nbsp;Add&nbsp; </button>
+        <button type="submit" class="primaryAction btn btn-success"> &nbsp;Save&nbsp; </button>
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
       </div>
       </form>
@@ -410,7 +418,22 @@ $(function () {
       {types: ['geocode']});
   $('.add-location').click(function() {
     $('form.location')[0].reset();
+    $('form.event input[name=url]').val('');  // consider
   });
+
+  $('.btn-location-edit').click(function() {
+    $('form.location')[0].reset();
+    $('.api-response').html('');
+    $('form.location input[name=name]').val($(this).data('name'));
+    $('form.location input[name=address]').val($(this).data('address'));
+    $('form.location input[name=url]').val($(this).data('link'));
+    $("form.location select[name=facility_type]").val($(this).data('facility_type'));
+    $("form.location select[name=field_type]").val($(this).data('field_type'));    
+    $('form.event input[name=url]').val($(this).data('url'));
+
+    $('#location-modal').modal();
+  });
+  
 });
 
 var redirect_url = '/';
@@ -520,7 +543,7 @@ $(function () {
 
       $('#event-modal').modal();
     });
-    
+
     $('.btn-logout').click(function() {
       var form = $('form.logout');
       $.post('/rest-auth/logout/', form.serialize()).done(function(data) {
