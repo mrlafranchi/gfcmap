@@ -112,6 +112,31 @@
 {% endblock %}
 </div>
 
+
+<!-- The Modal -->
+<div class="modal fade" id="welcome-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Welcome to Good Foot Club.</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <p>
+          We are building a soccer community for all the players around Sacramento.
+          We've just begun and we're building up our player roster and would love you to join us.
+        </p>
+        <p>Check out our site and see if there are any games at any of the places you play soccer.</p>
+        <p>Our goal is to provide a place for everyone to play more enjoyable soccer around sacramento.</p>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
 <!-- The Modal -->
 <div class="modal fade" id="login-modal">
   <div class="modal-dialog">
@@ -493,7 +518,12 @@ $(function () {
     }
   }
 
-  $().ready(function(){
+  $().ready(function() {
+    if (!localStorage.getItem("is_visited")) {
+      $('#welcome-modal').modal();      
+    }
+    localStorage.setItem("is_visited", true);
+
     $('.nav-link').click(function() {
       $('.api-response').html('');   
     });
