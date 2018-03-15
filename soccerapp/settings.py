@@ -185,3 +185,4 @@ EMAIL_USE_TLS = True
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "static/media")
 MEDIA_URL = '/static/media/'
+DEFAULT_FROM_EMAIL = "soccerbot@goodfoot.club"

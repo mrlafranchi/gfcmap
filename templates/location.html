@@ -14,7 +14,22 @@
         </div>
         <div class="col-sm-4 no-padding">          
           {% if user.is_authenticated %}
-          <button class="btn btn-sm btn-success float-right add-event mt-4" data-id="{{ location.id }}" data-location="{{ location.name }}">Add Game</button>
+            {% if user.is_superuser %}
+              <button class="btn btn-sm btn-danger float-right mt-4 ml-1" onclick="delete_location({{ location.id }})"><i class="fa fa-remove"></i></button>
+            {% endif %}
+            {% if user == location.created_by or user.is_superuser %}
+              <button class="btn btn-sm btn-default btn-location-edit float-right mt-4 ml-1" 
+                data-name="{{ location.name }}"
+                data-address="{{ location.address }}"
+                data-facility_type="{{ location.facility_type }}" 
+                data-field_type="{{ location.field_type }}" 
+                data-link="{{ location.url }}" 
+                data-url="/api/location/{{ location.id }}/" >
+                <i class="fa fa-pencil"></i>
+              </button>
+            {% endif %}
+
+            <button class="btn btn-sm btn-success float-right add-event mt-4" data-id="{{ location.id }}" data-location="{{ location.name }}">Add Game</button>
           {% endif %}
         </div>
       </div>
