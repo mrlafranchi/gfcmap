@@ -53,6 +53,12 @@
   {% csrf_token %}
 </form>
 
+<form method="post" id="loc_form">
+  {% csrf_token %}
+  <input id="center_loc" name="center" type="hidden">
+  <input id="zoom" name="zoom" type="hidden">
+</form>
+
 <div class="spinner">
   <div class="bounce1"></div>
   <div class="bounce2"></div>
@@ -119,6 +125,26 @@
         </p>
         <p>Check out our site and see if there are any games at any of the places you play soccer.</p>
         <p>Our goal is to provide a place for everyone to play more enjoyable soccer around sacramento.</p>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="profile-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Notification</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <p>Please fill all information on the <a href="/profile">profile</a> page to make proper use of the application</p>
+
+        <p>Otherwise some features are not fully available.</p>
       </div>
       
     </div>
@@ -407,8 +433,8 @@
 
 {% block gis_script %}
 <script type="text/javascript">
-  var mymap = L.map('mapid').setView([{{ center }}], 11);
-  L.tileLayer('https://api.mapbox.com/styles/v1/mrlafranchi/cje7t476g2b732suhfp4dppwt/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibXJsYWZyYW5jaGkiLCJhIjoiY2plN3Rqb3lrMDYzbTJxbTkzbng1MTI0biJ9.eL-tuo_tk8QFx_zFWwhllA', {
+  var mymap = L.map('mapid').setView([{{ center }}], {{ zoom }});
+  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibXJsYWZyYW5jaGkiLCJhIjoiY2plN3Rqb3lrMDYzbTJxbTkzbng1MTI0biJ9.eL-tuo_tk8QFx_zFWwhllA', {
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
     maxZoom: 18,
     id: 'mapbox.streets',
@@ -421,6 +447,15 @@
       L.marker([{{ location.lat }}, {{ location.lng }}]).addTo(mymap).bindPopup('{{ location.name }}');        
     {% endif %}
   {% endfor %}
+
+  mymap.on('dragend', function(e) {
+    var cnt = mymap.getCenter();
+    $('#center_loc').val(cnt.lat+', '+cnt.lng);
+    $('#zoom').val(mymap.getZoom());
+    $('#loc_form').submit();
+  });
+
+  // mymap.on('click', onMapClick);
 
 </script>
 
@@ -439,207 +474,18 @@ var redirect_url = '/';
 </script>
 {% endblock %}
 
-{% block script %}
-<script>
-$(function () {
-  $('.btn-location-edit').click(function() {
-    $('form.location')[0].reset();
-    $('.api-response').html('');
-    $('form.location input[name=name]').val($(this).data('name'));
-    $('form.location input[name=address]').val($(this).data('address'));
-    $('form.location input[name=url]').val($(this).data('link'));
-    $("form.location select[name=facility_type]").val($(this).data('facility_type'));
-    $("form.location select[name=field_type]").val($(this).data('field_type'));    
-    $('form.event input[name=url]').val($(this).data('url'));
-
-    $('#location-modal').modal();
-  });
-    
-  $('.add-event').click(function() {
-    $('form.event')[0].reset();
-    $('.api-response').html('');
-    $('#location-id').val($(this).data('id'));
-    $('#location-name').val($(this).data('location'));
-    $('form.event input[name=url]').val('');
-    $('#event-modal').modal();
-  });
-
-  $('#datetimepicker1').datetimepicker({
-    format: 'YYYY-MM-DD',
-    minDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
-  });
-
-  $('#datetimepicker2').datetimepicker({
-      format: 'LT'
-  });  
-});
+{% block profile_script %}
+<script type="text/javascript">
+  {% if user.is_authenticated and not user.home_field %}
+    $('#profile-modal').modal();
+  {% endif %}
 </script>
 {% endblock %}
 
-<script type="text/javascript">
-  var error_response = function(data){
-    var message;
+{% block script %}
+<script src="/static/js/index.js"></script>
+{% endblock %}
 
-    if (data.status == 500) {
-      message = "Something is wrong on server. please contact server administrator.";
-    } else {
-      var key = Object.keys(data.responseJSON)[0];
-      message = data.responseJSON[key];
-    }
-    
-    $('.api-response').html(message);
-    endLoading();
-  }
-
-  var susccess_response = function(data){
-    endLoading();
-    var RES = ['Password reset e-mail has been sent.', 
-               'Password has been reset with the new password.'];
-
-    if (data.detail == 'Verification e-mail sent.') {
-      $('.api-response').html('<span class="text-success">Verification e-mail sent. Check spam folder.</span>');      
-    } else if (RES.indexOf(data.detail) > -1) {
-      $('.api-response').html('<span class="text-success">'+data.detail+'</span>');
-    } else {
-      location.href = redirect_url;      
-    }
-  }
-
-  $().ready(function() {
-    if (!localStorage.getItem("is_visited")) {
-      $('#welcome-modal').modal();      
-    }
-    localStorage.setItem("is_visited", true);
-
-    $('.nav-link').click(function() {
-      $('.api-response').html('');   
-    });
-
-    $('form.ajax-post').submit(function(e){
-      startLoading();
-      e.preventDefault();
-
-      var form = $(this);
-
-      if (form.attr('class').indexOf('event ') > -1) {
-        var date = $('input[name=datetime]').val();
-        var time = $('input[name=time]').val();
-        $('input[name=datetime]').val(date+'T'+time);
-      }
-
-      if ($('#method').val()) { // edit
-        $.ajax({ 
-          url: $('#method').val(), 
-          data: form.serialize(),
-          method: 'PATCH',
-          headers: {
-            'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
-          }
-         })
-        .fail(function(data){error_response(data);})
-        .done(function(data){susccess_response(data);});        
-      } else {
-        $.post(form.attr('action'), form.serialize())
-        .fail(function(data){error_response(data);})
-        .done(function(data){susccess_response(data);});        
-      }
-
-      return false;
-    });
-
-    $('.btn-game-edit').click(function() {
-      $('form.event')[0].reset();
-      $('.api-response').html('');
-      $('#location-id').val($(this).data('loc_id'));
-      $('#location-name').val($(this).data('loc_name'));
-      $('form.event input[name=datetime]').val($(this).data('date'));
-      $('form.event input[name=time]').val($(this).data('time'));
-      $('form.event input[name=description]').val($(this).data('description'));
-      $("form.event select[name=players]").val($(this).data('players').split(','));
-      $('form.event input[name=url]').val($(this).data('url'));
-
-      $('#event-modal').modal();
-    });
-
-    $('.btn-logout').click(function() {
-      var form = $('form.logout');
-      $.post('/rest-auth/logout/', form.serialize()).done(function(data) {
-        location.reload();
-      });
-    })
-
-    $('.btn-game').click(function() {
-      startLoading();
-      $.ajax({
-        url: $(this).data('url'),
-        type: 'POST',
-        headers: {
-          'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
-        },
-        data: {},
-        success: function(data){ 
-          endLoading();
-          location.reload();
-        },
-      });
-    });       
-
-    $('.tmap').click(function() {
-      $('.tmap').toggleClass('d-none');
-      $('#mapid').toggleClass('d-none');
-    })
-  });
-
-  function delete_game(game_id) {
-    var r = confirm("Are you sure to delete this game?");
-    if (r == true) {
-      startLoading();
-      $.ajax({
-        url: '/api/gameevent/'+game_id+'/',
-        type: 'DELETE',
-        headers: {
-          'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
-        },
-        data: {},
-        success: function(data){ 
-          endLoading();
-          location.reload();
-        },
-      });
-    }
-  }
-
-  function delete_location(location_id) {
-    var r = confirm("Are you sure to delete this location? \nGames in this field would be deleted too.");
-    if (r == true) {
-      startLoading();
-      $.ajax({
-        url: '/api/location/'+location_id+'/',
-        type: 'DELETE',
-        headers: {
-          'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
-        },
-        data: {},
-        success: function(data){ 
-          endLoading();
-          location.reload();
-        },
-      });
-    }
-  }
-
-  function toggleBody(obj) {
-    $(obj).parent().find('.card-body.player').toggleClass('d-none');
-  }
-  
-  function startLoading() {
-    $('.spinner').show();    
-  }
-
-  function endLoading() {
-    $('.spinner').hide();    
-  }
-</script>
-
+<script type="text/javascript" src="/static/js/common.js"></script>
 </body>
 </html>

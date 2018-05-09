@@ -150,8 +150,8 @@ REST_AUTH_SERIALIZERS = {
 }
 
 REST_SESSION_LOGIN = True
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 AUTH_USER_MODEL = 'general.Player'
 
@@ -175,6 +175,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     )
 }
+
+RANGE_RADIUS = 50 # 50 KM
 
 EMAIL_SUBJECT_PREFIX = '[Good Foot Club] '
 EMAIL_HOST = 'smtp.mailgun.org'

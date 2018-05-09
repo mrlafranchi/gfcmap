@@ -111,7 +111,7 @@
 
       Right now we're focusing on getting people to sign up and play more pickup games.  Tell your friends and help us grow our community so we can all play more and more fun soccer.
 
-      <p>We have {{ players.count }} players signed up right now and need to reach 200 before expanding outside of Sacramento.</p>
+      <p>We have {{ num_players }} players signed up right now and need to reach 200 before expanding outside of Sacramento.</p>
 
       <p>Have any suggestions?</p> Message us on our facebook <a target="_blank" href="https://www.facebook.com/goodfootclub/">page</a> or send us an email at soccerbot@goodfoot.club.
     </div> 
@@ -119,78 +119,14 @@
 {% endblock %}
 
 {% block script %}
-<script>
-$(function () {
-  $('#datetimepicker1').datetimepicker({
-    format: 'YYYY-MM-DD',
-    minDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
-  });
-
-  $('#datetimepicker2').datetimepicker({
-      format: 'LT'
-  });  
-    
-  $('#datetimepicker12').datetimepicker({
-    format: 'YYYY-MM-DD'
-  });
-
-  $('form.profile').submit(function(e){
-    e.preventDefault();
-    var form = $(this);
-    startLoading();
-
-    $.ajax({
-      url: form.attr('action'),
-      type: 'PUT',
-      headers: {
-        'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').val()
-      },
-      data: $(this).serialize(),
-      success: function(data){ 
-        endLoading();
-        alert('Your profile saved successfully.'); 
-      },
-    });
-
-    return false;
-  });  
-
-  $("body").on("click", ".upload-avatar", function(e) {
-    e.preventDefault();
-    jQuery("#inputfile").click();
-  });
-
-  $("#inputfile").change(function() {
-      var fd = new FormData();
-      var file = this.files;
-      fd.append("images", file[0]);
-      fd.append('type', 'avatar');
-
-      jQuery.ajax({
-          type: 'POST',
-          url: '/upload-image',
-          data: fd,
-          contentType: false,
-          dataType: "json",
-          processData: false,
-          success: function(response) {
-              jQuery(".upload-image").find('input[class="uploded_id"]').val(response.image_name);
-              jQuery(".upload-image").find('input[class="uploded_id1"]').val(response.image_name);
-              jQuery(".avatar").attr('src', response.image_url);
-          }
-      });
-  });
-  $('.card-header.profile').click(function() {
-    $('.card-body.profile').toggleClass('d-none');
-    $('.fa-window-minimize').toggleClass('d-none');
-    $('.fa-window-maximize').toggleClass('d-none');    
-  });
-});
-</script>
+<script type="text/javascript" src="/static/js/profile.js"></script>
 {% endblock %}
 
 {% block gis_script %}
 <script type="text/javascript">
   var redirect_url = '{{ request.path }}';
 </script>
+{% endblock %}
+
+{% block profile_script %}
 {% endblock %}

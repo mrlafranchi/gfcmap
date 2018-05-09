@@ -2,11 +2,13 @@
 from __future__ import unicode_literals
 
 import datetime
+from math import sin, cos, sqrt, atan2, radians
 
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.core.files.storage import FileSystemStorage
+from django.conf import settings
 from django.http import JsonResponse
 from rest_framework import viewsets
 
@@ -17,17 +19,29 @@ from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
 def index(request):
-    locations = Location.objects.all().order_by('name')
-    center = '38.60909, -121.3768'
-
-    if request.user.is_authenticated() and request.user.home_field:
-        if request.user.home_field.lat and request.user.home_field.lng:
+    if request.method == 'POST':
+        center = request.POST.get('center')
+        zoom = request.POST.get('zoom')
+    else:
+        center = '38.60909, -121.3768'
+        zoom = 11
+        if request.user.is_authenticated() and request.user.home_field:
             center = '{}, {}'.format(request.user.home_field.lat, request.user.home_field.lng)
+            
+    players = []
+    if request.user.is_authenticated() and request.user.home_field:
+        players = get_players_in_range(Player.objects.all(), request.user.home_field)
+
+    locations = []
+    for loc in Location.objects.all().order_by('name'):
+        if calc_distance(float(center.split(', ')[0]), float(center.split(', ')[1]), loc.lat, loc.lng) < settings.RANGE_RADIUS:
+            locations.append(loc)        
 
     return render(request, 'index.html', {
-        'players': Player.objects.all(),
+        'players': players,
         'locations': locations,
-        'center': center
+        'center': center,
+        'zoom': zoom
     })
 
 @login_required(login_url='/')
@@ -37,7 +51,7 @@ def profile(request):
 
     return render(request, 'profile.html', {
         'games': games,
-        'players': Player.objects.all(),
+        'num_players': Player.objects.all().count(),
         'locations': locations
     })
 
@@ -45,10 +59,13 @@ def location(request, id):
     location = Location.objects.get(id=id)
     games = location.events.filter(datetime__gte=datetime.datetime.now()) \
                            .order_by('datetime')
+
+    players = get_players_in_range(Player.objects.all(), location)
+
     return render(request, 'location.html', {
         'games': games,
         'location': location,
-        'players': Player.objects.all(),
+        'players': players,
     })
 
 def game(request, id):
@@ -115,3 +132,27 @@ def upload_image(request):
     uploaded_file_url = fs.url(filename)
     res = {"image_url": uploaded_file_url,"image_name": uploaded_file_url.split('/')[-1]}
     return JsonResponse(res, safe=False)
+
+
+def calc_distance(lat1, lon1, lat2, lon2):
+    if lat1 and lon1 and lat2 and lon2:
+        radius = 6371  # km
+
+        dlat = radians(lat2 - lat1)
+        dlon = radians(lon2 - lon1)
+        a = (sin(dlat / 2) * sin(dlat / 2) +
+             cos(radians(lat1)) * cos(radians(lat2)) *
+             sin(dlon / 2) * sin(dlon / 2))
+        c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        d = radius * c
+        return d
+    return settings.RANGE_RADIUS * 10
+
+
+def get_players_in_range(players, loc):
+    players_ = []
+    for player in players:
+        if player.home_field:
+            if calc_distance(loc.lat, loc.lng, player.home_field.lat, player.home_field.lng) < settings.RANGE_RADIUS:
+                players_.append(player)
+    return players_
