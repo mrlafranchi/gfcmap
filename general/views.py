@@ -49,8 +49,13 @@ def profile(request):
     games = GameEvent.objects.filter(datetime__gte=datetime.datetime.now(), players__in=[request.user]).order_by('datetime')
     locations = Location.objects.all().order_by('name')
 
+    players = []
+    if request.user.home_field:
+        players = get_players_in_range(Player.objects.all(), request.user.home_field)
+
     return render(request, 'profile.html', {
         'games': games,
+        'players': players,
         'num_players': Player.objects.all().count(),
         'locations': locations
     })
