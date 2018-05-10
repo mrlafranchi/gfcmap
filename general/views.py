@@ -19,29 +19,25 @@ from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
 def index(request):
+    players = []
+    locations = []
+
     if request.method == 'POST':
         center = request.POST.get('center')
         zoom = request.POST.get('zoom')
         lats = [float(ii) for ii in request.POST.get('lats').split(', ')]
         lngs = [float(ii) for ii in request.POST.get('lngs').split(', ')]
+        
+        if request.user.is_authenticated() and request.user.home_field:
+            players = get_players_in_range(Player.objects.all(), request.user.home_field)
+
+        for loc in Location.objects.all().order_by('name'):
+            if lats[0] <= loc.lat <= lats[1] and lngs[0] <= loc.lng <= lngs[1]:
+                locations.append(loc)
     else:
         center = '38.60909, -121.3768'
-        lats = [38.474556758368635, 38.742837445589046]
-        lngs = [-121.97776794433595, -120.77613830566408]
-
         zoom = 11
-        if request.user.is_authenticated() and request.user.home_field:
-            center = '{}, {}'.format(request.user.home_field.lat, request.user.home_field.lng)
             
-    players = []
-    if request.user.is_authenticated() and request.user.home_field:
-        players = get_players_in_range(Player.objects.all(), request.user.home_field)
-
-    locations = []
-    for loc in Location.objects.all().order_by('name'):
-        if lats[0] <= loc.lat <= lats[1] and lngs[0] <= loc.lng <= lngs[1]:
-            locations.append(loc)
-
     return render(request, 'index.html', {
         'players': players,
         'locations': locations,

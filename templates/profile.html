@@ -11,71 +11,71 @@
     <div class="card-body profile d-none">
       <form class="profile form-inline" action="/rest-auth/user/">
       <div class="modal-body">
-          {% csrf_token %}
-          <div class="form-group m-t-15">
-              <div class="col-sm-4 text-center col-xs-5 upload-image" style="margin-bottom: 15px;">
-                  <input id="inputfile" type="file" name="files[]" data-maxfilesize="4000000" class="d-none" data-maxuploadfile="20" data-imagequality="0.7">
-                  <input type="hidden" name="uploded_id[]" class="uploded_id" />
-                  <input type="hidden" name="avatar" class="uploded_id1" value="{{ form.avatar.value }}" />
-                  <img src="/static/media/avatar/{{ user.avatar }}" class="avatar rounded-circle" style="width: 100px; height: 100px;">
-              </div>
-              <div class="col-sm-4 col-md-2 text-center">
-                  <button class="btn upload-avatar"><i class="fa fa-upload"></i> Upload Avatar</button>
-              </div>
+        {% csrf_token %}
+        <div class="form-group m-t-15">
+          <div class="col-sm-4 text-center col-xs-5 upload-image" style="margin-bottom: 15px;">
+            <input id="inputfile" type="file" name="files[]" data-maxfilesize="4000000" class="d-none" data-maxuploadfile="20" data-imagequality="0.7">
+            <input type="hidden" name="uploded_id[]" class="uploded_id" />
+            <input type="hidden" name="avatar" class="uploded_id1" value="{{ form.avatar.value }}" />
+            <img src="/static/media/avatar/{{ user.avatar }}" class="avatar rounded-circle" style="width: 100px; height: 100px;">
           </div>
+          <div class="col-sm-4 col-md-2 text-center">
+            <button class="btn upload-avatar"><i class="fa fa-upload"></i> Upload Avatar</button>
+          </div>
+        </div>
 
-          <div class="form-group mt-3">
-              <label class="control-label col-sm-4" for="id_login1">First Name:</label>
-              <div class="col-sm-8">
-                  <input type="text" name="first_name" class="form-control" required="" {% if user.first_name %}value="{{ user.first_name }}"{% endif %}>
-              </div>
+        <div class="form-group mt-3">
+          <label class="control-label col-sm-4" for="id_login1">First Name:</label>
+          <div class="col-sm-8">
+            <input type="text" name="first_name" class="form-control" required="" {% if user.first_name %}value="{{ user.first_name }}"{% endif %}>
           </div>
-          <div class="form-group mt-3">
-              <label class="control-label col-sm-4" for="id_login1">Last Name:</label>
-              <div class="col-sm-8">
-                  <input type="text" name="last_name" class="form-control" required="" {% if user.last_name %}value="{{ user.last_name }}"{% endif %}>
-              </div>
+        </div>
+        <div class="form-group mt-3">
+          <label class="control-label col-sm-4" for="id_login1">Last Name:</label>
+          <div class="col-sm-8">
+            <input type="text" name="last_name" class="form-control" required="" {% if user.last_name %}value="{{ user.last_name }}"{% endif %}>
           </div>
-          <div class="form-group mt-3">
-              <label class="control-label col-sm-4" for="id_password">Birthday:</label>
-              <div class="col-sm-8">
-                <div class="input-group date" id="datetimepicker12" data-target-input="nearest" style="max-width: 258px;">
-                    <input type="text" name="birthday" class="form-control datetimepicker-input" data-target="#datetimepicker12" required=""  {% if user.birthday %}value="{{ user.birthday|date:"Y-m-d" }}"{% endif %}/>
-                    <div class="input-group-append" data-target="#datetimepicker12" data-toggle="datetimepicker">
-                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                    </div>
-                </div>
+        </div>
+        <div class="form-group mt-3">
+          <label class="control-label col-sm-4" for="id_password">Birthday:</label>
+          <div class="col-sm-8">
+            <div class="input-group date" id="datetimepicker12" data-target-input="nearest" style="max-width: 258px;">
+              <input type="text" name="birthday" class="form-control datetimepicker-input" data-target="#datetimepicker12" required=""  {% if user.birthday %}value="{{ user.birthday|date:"Y-m-d" }}"{% endif %}/>
+              <div class="input-group-append" data-target="#datetimepicker12" data-toggle="datetimepicker">
+                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
               </div>
+            </div>
           </div>
-          <div class="form-group mt-3">
-              <label class="control-label col-sm-4" for="id_password">Gender:</label>
-              <div class="col-sm-8">
-                  <select class="input-xlarge form-control" name="gender">
-                    <option value="male" {% if user.gender == "male" %} selected {% endif %}>Male</option>
-                    <option value="female" {% if user.gender == "female" %} selected {% endif %}>Female</option>
-                  </select> 
-              </div>
-          </div>          
-          <div class="form-group mt-3">
-              <label class="control-label col-sm-4" for="id_password">Email:</label>
-              <div class="col-sm-8">
-                  <input name="email" type="email" class="input-xlarge form-control" required="" {% if user.email %}value="{{ user.email }}"{% endif %}>
-              </div>
+        </div>
+        <div class="form-group mt-3">
+          <label class="control-label col-sm-4" for="id_password">Gender:</label>
+          <div class="col-sm-8">
+            <select class="input-xlarge form-control" name="gender">
+              <option value="male" {% if user.gender == "male" %} selected {% endif %}>Male</option>
+              <option value="female" {% if user.gender == "female" %} selected {% endif %}>Female</option>
+            </select> 
           </div>
-          <div class="form-group mt-3">
-              <label class="control-label col-sm-4" for="id_password">Home Field:</label>
-              <div class="col-sm-8">
-                  <select class="input-xlarge form-control" name="home_field" required="">
-                    <option value=""> --- </option>
-                    {% for location in locations %}
-                      <option value="{{ location.id }}" {% if user.home_field.id == location.id %} selected {% endif %}>{{ location.name }}</option>
-                    {% endfor %}
-                  </select> 
-              </div>
+        </div>          
+        <div class="form-group mt-3">
+          <label class="control-label col-sm-4" for="id_password">Email:</label>
+          <div class="col-sm-8">
+            <input name="email" type="email" class="input-xlarge form-control" required="" {% if user.email %}value="{{ user.email }}"{% endif %}>
           </div>
-          <div class="col-sm-8 offset-sm-3 mt-3">
-            <div class="api-response text-danger"></div>
+        </div>
+        <div class="form-group mt-3">
+          <label class="control-label col-sm-4" for="id_password">Home Field:</label>
+          <div class="col-sm-8">
+            <select class="input-xlarge form-control" name="home_field" required="">
+              <option value=""> --- </option>
+              {% for location in locations %}
+                <option value="{{ location.id }}" {% if user.home_field.id == location.id %} selected {% endif %}>{{ location.name }}</option>
+              {% endfor %}
+            </select> 
           </div>
+        </div>
+        <div class="col-sm-8 offset-sm-3 mt-3">
+          <div class="api-response text-danger"></div>
+        </div>
       </div>
       
       <!-- Modal footer -->

@@ -94,7 +94,6 @@
           </div>
         </div>
         <div class="row">
-          
           {% if user.is_authenticated %}
           <div class="col-sm-12 no-padding">
             <button class="btn btn-success btn-sm float-right add-event" data-id="{{ location.id }}" data-location="{{ location.name }}">Add Game</button>
@@ -167,22 +166,22 @@
       <!-- Modal body -->
       <form class="login form-inline ajax-post" method="POST" action="{% url 'rest_login' %}">
       <div class="modal-body">
-          {% csrf_token %}
-          <div class="form-group mt-3">
-              <label class="control-label col-sm-3" for="id_login1">Email:</label>
-              <div class="col-sm-8">
-                  <input id="id_login1" name="email" placeholder="Email" type="email" class="form-control" required="">
-              </div>
+        {% csrf_token %}
+        <div class="form-group mt-3">
+          <label class="control-label col-sm-3" for="id_login1">Email:</label>
+          <div class="col-sm-8">
+            <input id="id_login1" name="email" placeholder="Email" type="email" class="form-control" required="">
           </div>
-          <div class="form-group mt-3">
-              <label class="control-label col-sm-3" for="id_password">Password:</label>
-              <div class="col-sm-8">
-                  <input id="id_password" name="password" placeholder="Password" type="password" class="input-xlarge form-control" required="">
-              </div>
+        </div>
+        <div class="form-group mt-3">
+          <label class="control-label col-sm-3" for="id_password">Password:</label>
+          <div class="col-sm-8">
+            <input id="id_password" name="password" placeholder="Password" type="password" class="input-xlarge form-control" required="">
           </div>
-          <div class="col-sm-8 offset-sm-3 mt-3">
-            <div class="api-response text-danger"></div>
-          </div>
+        </div>
+        <div class="col-sm-8 offset-sm-3 mt-3">
+          <div class="api-response text-danger"></div>
+        </div>
       </div>
       
       <!-- Modal footer -->
@@ -192,7 +191,6 @@
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
       </div>
       </form>
-      
     </div>
   </div>
 </div>
@@ -210,28 +208,28 @@
       <!-- Modal body -->
       <form class="signup form-inline ajax-post" method="POST" action="{% url 'rest_register' %}">
       <div class="modal-body">
-          {% csrf_token %}
-          <div class="form-group mt-3">
-              <label class="control-label col-sm-4" for="id_login1">Email:</label>
-              <div class="col-sm-8">
-                  <input name="email" placeholder="Email" type="email" class="form-control" required="">
-              </div>
+        {% csrf_token %}
+        <div class="form-group mt-3">
+          <label class="control-label col-sm-4" for="id_login1">Email:</label>
+          <div class="col-sm-8">
+            <input name="email" placeholder="Email" type="email" class="form-control" required="">
           </div>
-          <div class="form-group mt-3">
-              <label class="control-label col-sm-4" for="id_password">Password:</label>
-              <div class="col-sm-8">
-                  <input name="password1" placeholder="Password" type="password" class="input-xlarge form-control" required="">
-              </div>
+        </div>
+        <div class="form-group mt-3">
+          <label class="control-label col-sm-4" for="id_password">Password:</label>
+          <div class="col-sm-8">
+            <input name="password1" placeholder="Password" type="password" class="input-xlarge form-control" required="">
           </div>
-          <div class="form-group mt-3">
-              <label class="control-label col-sm-4" for="id_password">Re-Password:</label>
-              <div class="col-sm-8">
-                  <input name="password2" placeholder="Password" type="password" class="input-xlarge form-control" required="">
-              </div>
+        </div>
+        <div class="form-group mt-3">
+          <label class="control-label col-sm-4" for="id_password">Re-Password:</label>
+          <div class="col-sm-8">
+            <input name="password2" placeholder="Password" type="password" class="input-xlarge form-control" required="">
           </div>
-          <div class="col-sm-8 offset-sm-3 mt-3">
-            <div class="api-response text-danger"></div>
-          </div>
+        </div>
+        <div class="col-sm-8 offset-sm-3 mt-3">
+          <div class="api-response text-danger"></div>
+        </div>
       </div>
       
       <!-- Modal footer -->
@@ -240,7 +238,6 @@
         <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
       </div>
       </form>
-      
     </div>
   </div>
 </div>
@@ -258,16 +255,16 @@
       <!-- Modal body -->
       <form class="signup form-inline ajax-post" method="POST" action="{% url 'rest_password_reset' %}">
       <div class="modal-body">
-          {% csrf_token %}
-          <div class="form-group mt-3">
-              <label class="control-label col-sm-3" for="id_login1">Email:</label>
-              <div class="col-sm-9">
-                  <input name="email" placeholder="Email" type="email" class="form-control" required="">
-              </div>
+        {% csrf_token %}
+        <div class="form-group mt-3">
+          <label class="control-label col-sm-3" for="id_login1">Email:</label>
+          <div class="col-sm-9">
+            <input name="email" placeholder="Email" type="email" class="form-control" required="">
           </div>
-          <div class="col-sm-8 offset-sm-3 mt-3">
-            <div class="api-response text-danger"></div>
-          </div>
+        </div>
+        <div class="col-sm-8 offset-sm-3 mt-3">
+          <div class="api-response text-danger"></div>
+        </div>
       </div>
       
       <!-- Modal footer -->
@@ -295,47 +292,47 @@
       <!-- Modal body -->
       <form class="location form-inline ajax-post" method="POST" action="/api/location/">
       <div class="modal-body">
-          {% csrf_token %}
-          <div class="form-group mt-3">
-              <label class="control-label col-sm-4" for="id_login1">Name:</label>
-              <div class="col-sm-8">
-                  <input name="name" type="text" class="form-control" required="">
-              </div>
+        {% csrf_token %}
+        <div class="form-group mt-3">
+          <label class="control-label col-sm-4" for="id_login1">Name:</label>
+          <div class="col-sm-8">
+            <input name="name" type="text" class="form-control" required="">
           </div>
-          <div class="form-group mt-3">
-              <label class="control-label col-sm-4" for="id_password">Address:</label>
-              <div class="col-sm-8">
-                  <input name="address" type="text" id="address" class="input-xlarge form-control" required="">
-              </div>
+        </div>
+        <div class="form-group mt-3">
+          <label class="control-label col-sm-4" for="id_password">Address:</label>
+          <div class="col-sm-8">
+            <input name="address" type="text" id="address" class="input-xlarge form-control" required="">
           </div>
-          <div class="form-group mt-3">
-              <label class="control-label col-sm-4" for="id_password">Facility Type:</label>
-              <div class="col-sm-8">
-                  <select class="input-xlarge form-control" name="facility_type">
-                    <option value="indoor">Indoor</option>
-                    <option value="outdoor">Outdoor</option>
-                  </select> 
-              </div>
+        </div>
+        <div class="form-group mt-3">
+          <label class="control-label col-sm-4" for="id_password">Facility Type:</label>
+          <div class="col-sm-8">
+            <select class="input-xlarge form-control" name="facility_type">
+              <option value="indoor">Indoor</option>
+              <option value="outdoor">Outdoor</option>
+            </select> 
           </div>
-          <div class="form-group mt-3">
-              <label class="control-label col-sm-4" for="id_password">Field Type:</label>
-              <div class="col-sm-8">
-                  <select class="input-xlarge form-control" name="field_type">
-                    <option value="grass">Grass</option>
-                    <option value="turf">Turf</option>
-                    <option value="futsal">Futsal</option>
-                  </select> 
-              </div>
+        </div>
+        <div class="form-group mt-3">
+          <label class="control-label col-sm-4" for="id_password">Field Type:</label>
+          <div class="col-sm-8">
+            <select class="input-xlarge form-control" name="field_type">
+              <option value="grass">Grass</option>
+              <option value="turf">Turf</option>
+              <option value="futsal">Futsal</option>
+            </select> 
           </div>
-          <div class="form-group mt-3">
-              <label class="control-label col-sm-4" for="id_login1">Facility URL:</label>
-              <div class="col-sm-8">
-                  <input name="url" type="text" class="form-control" placeholder="www.goodfoot.club">
-              </div>
+        </div>
+        <div class="form-group mt-3">
+          <label class="control-label col-sm-4" for="id_login1">Facility URL:</label>
+          <div class="col-sm-8">
+            <input name="url" type="text" class="form-control" placeholder="www.goodfoot.club">
           </div>
-          <div class="col-sm-8 offset-sm-3 mt-3">
-            <div class="api-response text-danger"></div>
-          </div>
+        </div>
+        <div class="col-sm-8 offset-sm-3 mt-3">
+          <div class="api-response text-danger"></div>
+        </div>
       </div>
       
       <!-- Modal footer -->
@@ -365,12 +362,12 @@
       <div class="modal-body">
           {% csrf_token %}
           <div class="form-group mt-3">
-              <label class="control-label col-sm-4" for="id_login1">Location:</label>
-              <div class="col-sm-8">
-                  <input name="location" id="location-id" type="hidden">
-                  <input name="url" id="method" type="hidden">
-                  <input type="text" id="location-name" class="form-control" readonly>
-              </div>
+            <label class="control-label col-sm-4" for="id_login1">Location:</label>
+            <div class="col-sm-8">
+              <input name="location" id="location-id" type="hidden">
+              <input name="url" id="method" type="hidden">
+              <input type="text" id="location-name" class="form-control" readonly>
+            </div>
           </div>
           <div class="form-group mt-3">
               <label class="control-label col-sm-4" for="id_password">Date:</label>
@@ -468,7 +465,7 @@
     $('#lngs').val(bounds._southWest.lng+', '+bounds._northEast.lng);
     $('#loc_form').submit();
   }
-  
+
   {% if request.method == 'GET' %}
     updateLoaction();
   {% endif %}
