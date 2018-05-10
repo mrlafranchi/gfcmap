@@ -39,24 +39,24 @@ $(function () {
   });
 
   $("#inputfile").change(function() {
-      var fd = new FormData();
-      var file = this.files;
-      fd.append("images", file[0]);
-      fd.append('type', 'avatar');
+    var fd = new FormData();
+    var file = this.files;
+    fd.append("images", file[0]);
+    fd.append('type', 'avatar');
 
-      jQuery.ajax({
-          type: 'POST',
-          url: '/upload-image',
-          data: fd,
-          contentType: false,
-          dataType: "json",
-          processData: false,
-          success: function(response) {
-              jQuery(".upload-image").find('input[class="uploded_id"]').val(response.image_name);
-              jQuery(".upload-image").find('input[class="uploded_id1"]').val(response.image_name);
-              jQuery(".avatar").attr('src', response.image_url);
-          }
-      });
+    jQuery.ajax({
+      type: 'POST',
+      url: '/upload-image',
+      data: fd,
+      contentType: false,
+      dataType: "json",
+      processData: false,
+      success: function(response) {
+        jQuery(".upload-image").find('input[class="uploded_id"]').val(response.image_name);
+        jQuery(".upload-image").find('input[class="uploded_id1"]').val(response.image_name);
+        jQuery(".avatar").attr('src', response.image_url);
+      }
+    });
   });
   $('.card-header.profile').click(function() {
     $('.card-body.profile').toggleClass('d-none');
