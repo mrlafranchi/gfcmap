@@ -468,6 +468,10 @@
     $('#lngs').val(bounds._southWest.lng+', '+bounds._northEast.lng);
     $('#loc_form').submit();
   }
+  
+  {% if request.method == 'GET' %}
+    updateLoaction();
+  {% endif %}
 </script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfqKLaWJAKqyezsQKrZbsfCuzTLfgDkL0&libraries=places"></script>
