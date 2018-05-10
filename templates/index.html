@@ -57,6 +57,8 @@
   {% csrf_token %}
   <input id="center_loc" name="center" type="hidden">
   <input id="zoom" name="zoom" type="hidden">
+  <input id="lats" name="lats" type="hidden">
+  <input id="lngs" name="lngs" type="hidden">
 </form>
 
 <div class="spinner">
@@ -449,14 +451,23 @@
   {% endfor %}
 
   mymap.on('dragend', function(e) {
-    var cnt = mymap.getCenter();
-    $('#center_loc').val(cnt.lat+', '+cnt.lng);
-    $('#zoom').val(mymap.getZoom());
-    $('#loc_form').submit();
+    updateLoaction();
   });
 
-  // mymap.on('click', onMapClick);
+  mymap.on('zoomend', function() {
+    updateLoaction();
+  });
 
+  function updateLoaction() {
+    var cnt = mymap.getCenter();
+    var bounds = mymap.getBounds();
+
+    $('#center_loc').val(cnt.lat+', '+cnt.lng);
+    $('#zoom').val(mymap.getZoom());
+    $('#lats').val(bounds._southWest.lat+', '+bounds._northEast.lat);
+    $('#lngs').val(bounds._southWest.lng+', '+bounds._northEast.lng);
+    $('#loc_form').submit();
+  }
 </script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDfqKLaWJAKqyezsQKrZbsfCuzTLfgDkL0&libraries=places"></script>
