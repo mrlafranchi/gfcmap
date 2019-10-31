@@ -1,4 +1,4 @@
-Django==1.11.19
+Django==1.11.23
 django-rest-auth==0.9.3
 djangorestframework>=3.7.0
 django-allauth>=0.24.1
